@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Stopwatch</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: cyan;
+}
+
+.container {
+    background: #112d4e;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    width: 380px;
+    box-shadow: 0 0 20px rgba(30,144,255,0.4),
+                0 0 40px rgba(30,144,255,0.3),
+                0 0 60px rgba(30,144,255,0.2);
+    animation: boxGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes boxGlow {
+    from {
+        box-shadow: 0 0 15px rgba(0,191,255,0.4),
+                    0 0 30px rgba(0,191,255,0.3),
+                    0 0 45px rgba(0,191,255,0.2);
+    }
+    to {
+        box-shadow: 0 0 25px rgba(138,43,226,0.5),
+                    0 0 50px rgba(138,43,226,0.4),
+                    0 0 70px rgba(138,43,226,0.3);
+    }
+}
+
+h1 {
+    font-size: 2.3rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, cyan, blue, violet);
+    background-size: 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowMove 5s linear infinite;
+}
+
+#display {
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, cyan, blue, violet);
+    background-size: 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowMove 5s linear infinite;
+}
+
+@keyframes rainbowMove {
+    0% {
+        background-position: 0%;
+    }
+    100% {
+        background-position: 400%;
+    }
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: white;
+    transition: 0.3s;
+    background: darkblue;
+    box-shadow: 0 0 10px #1e90ff, 0 0 20px #1e90ff;
+}
+
+button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 15px #1e90ff, 0 0 30px #1e90ff;
+}
+
+ul {
+    margin-top: 20px;
+    text-align: left;
+    max-height: 130px;
+    overflow-y: auto;
+    padding-left: 20px;
+}
+
+li {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>My Stopwatch</h1>
+
+    <div id="display">00:00:00:00</div>
+
+    <button onclick="startStopwatch()">Start</button>
+    <button onclick="pauseStopwatch()">Pause</button>
+    <button onclick="resetStopwatch()">Reset</button>
+    <button onclick="lapTime()">Lap</button>
+
+    <ul id="laps"></ul>
+</div>
+
+<script>
+let cs = 0;
+let sec = 0;
+let min = 0;
+let hr = 0;
+let timer = null;
+
+const display = document.getElementById("display");
+const laps = document.getElementById("laps");
+
+function updateDisplay() {
+    const h = String(hr).padStart(2, "0");
+    const m = String(min).padStart(2, "0");
+    const s = String(sec).padStart(2, "0");
+    const c = String(cs).padStart(2, "0");
+
+    display.innerText = `${h}:${m}:${s}:${c}`;
+}
+
+function startStopwatch() {
+    if (timer !== null) return;
+
+    timer = setInterval(() => {
+        cs++;
+
+        if (cs >= 100) {
+            cs = 0;
+            sec++;
+        }
+
+        if (sec >= 60) {
+            sec = 0;
+            min++;
+        }
+
+        if (min >= 60) {
+            min = 0;
+            hr++;
+        }
+
+        updateDisplay();
+    }, 10);
+}
+
+function pauseStopwatch() {
+    clearInterval(timer);
+    timer = null;
+}
+
+function resetStopwatch() {
+    clearInterval(timer);
+    timer = null;
+
+    hr = 0;
+    min = 0;
+    sec = 0;
+    cs = 0;
+
+    updateDisplay();
+    laps.innerHTML = "";
+}
+
+function lapTime() {
+    if (timer === null) return;
+
+    const li = document.createElement("li");
+    li.textContent = `Lap ${laps.children.length + 1}: ${display.innerText}`;
+    laps.appendChild(li);
+}
+
+updateDisplay();
+</script>
+
+</body>
+</html>

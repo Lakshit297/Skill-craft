@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do List App</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#0a0f1c,#111a2b);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    padding:20px;
+}
+
+.container{
+    width:95%;
+    max-width:1000px;
+    background:#0f172a;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.6);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.top-controls{
+    display:flex;
+    gap:10px;
+    margin-bottom:25px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+input,button{
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    font-size:14px;
+}
+
+input{
+    background:#1e293b;
+    color:white;
+    border:1px solid #1d4ed8;
+}
+
+input::placeholder{
+    color:#94a3b8;
+}
+
+button{
+    background:#1d4ed8;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#2563eb;
+}
+
+.lists{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.list{
+    flex:1;
+    min-width:280px;
+    background:#111827;
+    padding:15px;
+    border-radius:15px;
+    border:1px solid #1d4ed8;
+}
+
+.list-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.delete-list-btn{
+    background:#b91c1c;
+}
+
+.delete-list-btn:hover{
+    background:#dc2626;
+}
+
+.add-task{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.task{
+    background:#1e293b;
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:10px;
+    border-left:4px solid #1d4ed8;
+}
+
+.task.completed{
+    opacity:0.5;
+    text-decoration:line-through;
+}
+
+.task-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.task-actions button{
+    padding:5px 8px;
+    font-size:12px;
+    margin-left:5px;
+}
+
+.task small{
+    display:block;
+    margin-top:5px;
+    color:#94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>To-Do App</h1>
+
+    <div class="top-controls">
+        <input type="text" id="newListName" placeholder="New List Name">
+        <button onclick="addList()">Add List</button>
+    </div>
+
+    <div class="lists" id="listsContainer"></div>
+</div>
+
+<script>
+
+let lists = JSON.parse(localStorage.getItem("taskLists")) || [];
+
+function saveData(){
+    localStorage.setItem("taskLists", JSON.stringify(lists));
+}
+
+function addList(){
+    const name = document.getElementById("newListName").value.trim();
+
+    if(name === ""){
+        alert("Enter a list name");
+        return;
+    }
+
+    lists.push({
+        name:name,
+        tasks:[]
+    });
+
+    document.getElementById("newListName").value = "";
+
+    saveData();
+    render();
+}
+
+function deleteList(index){
+    if(confirm("Delete this list?")){
+        lists.splice(index,1);
+        saveData();
+        render();
+    }
+}
+
+function addTask(listIndex){
+
+    const taskInput =
+        document.getElementById(`taskInput${listIndex}`);
+
+    const taskDate =
+        document.getElementById(`taskDate${listIndex}`);
+
+    const text = taskInput.value.trim();
+    const dateTime = taskDate.value;
+
+    if(text === ""){
+        alert("Enter a task");
+        return;
+    }
+
+    lists[listIndex].tasks.push({
+        text:text,
+        dateTime:dateTime,
+        completed:false
+    });
+
+    saveData();
+    render();
+}
+
+function toggleComplete(listIndex,taskIndex){
+
+    lists[listIndex].tasks[taskIndex].completed =
+    !lists[listIndex].tasks[taskIndex].completed;
+
+    saveData();
+    render();
+}
+
+function deleteTask(listIndex,taskIndex){
+
+    lists[listIndex].tasks.splice(taskIndex,1);
+
+    saveData();
+    render();
+}
+
+function editTask(listIndex,taskIndex){
+
+    const currentTask =
+        lists[listIndex].tasks[taskIndex];
+
+    const newText =
+        prompt("Edit Task", currentTask.text);
+
+    if(newText !== null && newText.trim() !== ""){
+        currentTask.text = newText.trim();
+
+        saveData();
+        render();
+    }
+}
+
+function render(){
+
+    const container =
+        document.getElementById("listsContainer");
+
+    container.innerHTML = "";
+
+    lists.forEach((list,listIndex)=>{
+
+        const listDiv =
+            document.createElement("div");
+
+        listDiv.className = "list";
+
+        listDiv.innerHTML = `
+            <div class="list-header">
+                <h3>${list.name}</h3>
+                <button class="delete-list-btn"
+                onclick="deleteList(${listIndex})">
+                Delete
+                </button>
+            </div>
+
+            <div class="add-task">
+                <input
+                type="text"
+                id="taskInput${listIndex}"
+                placeholder="Enter task">
+
+                <input
+                type="datetime-local"
+                id="taskDate${listIndex}">
+
+                <button
+                onclick="addTask(${listIndex})">
+                Add Task
+                </button>
+            </div>
+        `;
+
+        list.tasks.forEach((task,taskIndex)=>{
+
+            const taskDiv =
+                document.createElement("div");
+
+            taskDiv.className =
+                "task" +
+                (task.completed ? " completed" : "");
+
+            taskDiv.innerHTML = `
+                <div class="task-top">
+
+                    <span>${task.text}</span>
+
+                    <div class="task-actions">
+
+                        <button
+                        onclick="toggleComplete(${listIndex},${taskIndex})">
+                        ✓
+                        </button>
+
+                        <button
+                        onclick="editTask(${listIndex},${taskIndex})">
+                        Edit
+                        </button>
+
+                        <button
+                        onclick="deleteTask(${listIndex},${taskIndex})">
+                        Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+                ${
+                    task.dateTime
+                    ? `<small>${new Date(task.dateTime).toLocaleString()}</small>`
+                    : ""
+                }
+            `;
+
+            listDiv.appendChild(taskDiv);
+        });
+
+        container.appendChild(listDiv);
+    });
+}
+
+render();
+
+</script>
+
+</body>
+</html>

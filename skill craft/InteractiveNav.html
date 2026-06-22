@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FITLIFE</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: linear-gradient(135deg, #080e2c, #161320);
+    background-size: 300% 300%;
+    animation: gradientMove 10s ease infinite;
+    color: cyan;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.rainbow-text {
+    font-size: 48px;
+    font-weight: bold;
+    background: linear-gradient(
+        90deg,
+        cyan,
+        rgb(166, 166, 221),
+        rgb(71, 71, 145),
+        rgb(107, 107, 163)
+    );
+    background-size: 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowMove 6s linear infinite;
+}
+
+@keyframes rainbowMove {
+    0% { background-position: 0%; }
+    100% { background-position: 400%; }
+}
+
+#navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    transition: 0.4s;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+}
+
+.nav-links li {
+    margin-left: 30px;
+    position: relative;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+}
+
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 0%;
+    height: 2px;
+    background: #ffdd57;
+    transition: width 0.3s;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.scrolled {
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.content {
+    min-height: 100vh;
+    padding: 140px 20px 40px;
+    text-align: center;
+}
+
+.content h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.content p {
+    font-size: 18px;
+    max-width: 700px;
+    margin: auto;
+    line-height: 1.8;
+}
+
+section {
+    scroll-margin-top: 120px;
+}
+</style>
+</head>
+
+<body>
+
+<nav id="navbar">
+    <div class="logo">FITLIFE</div>
+    <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</nav>
+
+<section id="home" class="content">
+    <h1 class="rainbow-text">GET ACTIVE!</h1>
+    <p>
+        Welcome to your fitness journey. This platform is designed to help you
+        build strength, improve endurance, and maintain a healthy lifestyle
+        through structured workouts and smart training methods. Whether you're
+        a beginner or getting back on track, consistency starts here.
+    </p>
+</section>
+
+<section id="about" class="content">
+    <h1 class="rainbow-text">About</h1>
+    <p>
+        We believe fitness is not about perfection — it's about progress.
+        Our goal is to make training simple, effective, and accessible for
+        everyone. This platform demonstrates how proper guidance, regular
+        exercise, and discipline can improve both physical health and mental
+        confidence.
+    </p>
+</section>
+
+<section id="services" class="content">
+    <h1 class="rainbow-text">Services</h1>
+    <p>
+        • Workout Guidance – Structured routines for overall fitness<br><br>
+        • Beginner-Friendly Plans – Easy-to-follow exercises for all levels<br><br>
+        • Progress Tracking – Stay motivated by monitoring improvements<br><br>
+        • Healthy Lifestyle Tips – Support for building long-term fitness habits<br><br>
+        • Home & Gym Training – Flexible plans you can follow anywhere
+    </p>
+</section>
+
+<section id="contact" class="content">
+    <h1 class="rainbow-text">Contact</h1>
+    <p>
+        Email: fitlife@gmail.com<br><br>
+        Phone: +91 9911223344
+    </p>
+</section>
+
+<script>
+window.addEventListener("scroll", function () {
+    const navbar = document.getElementById("navbar");
+    navbar.classList.toggle("scrolled", window.scrollY > 50);
+});
+</script>
+
+</body>
+</html>

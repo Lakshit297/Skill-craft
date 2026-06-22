@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Blue Tic Tac Toe</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#000;
+}
+
+.game-container{
+  text-align:center;
+  padding:40px;
+  border-radius:20px;
+  background:#0a0a0a;
+  border:1px solid royalblue;
+  box-shadow:0 0 50px rgba(65,105,225,0.6);
+}
+
+h1{
+  color:royalblue;
+  margin-bottom:20px;
+  text-shadow:0 0 20px royalblue;
+  font-weight:500;
+}
+
+.status{
+  margin-bottom:20px;
+  color:royalblue;
+  font-size:18px;
+  text-shadow:0 0 10px royalblue;
+}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(3,110px);
+  gap:15px;
+  justify-content:center;
+  margin-bottom:25px;
+}
+
+.cell{
+  width:110px;
+  height:110px;
+  background:#111;
+  border:2px solid royalblue;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.25s ease;
+  color:#ffffff;
+  text-shadow:0 0 12px royalblue;
+  box-shadow:0 0 15px rgba(65,105,225,0.4);
+}
+
+.cell:hover{
+  transform:scale(1.06);
+  box-shadow:0 0 30px royalblue;
+}
+.winning{
+  background:#000;
+  box-shadow:0 0 45px royalblue;
+  animation:glow 1s infinite alternate;
+}
+
+@keyframes glow{
+  from{box-shadow:0 0 20px royalblue;}
+  to{box-shadow:0 0 55px royalblue;}
+}
+
+button{
+  padding:10px 25px;
+  border:none;
+  border-radius:20px;
+  font-size:15px;
+  cursor:pointer;
+  background:royalblue;
+  color:black;
+  font-weight:600;
+  transition:0.25s;
+  box-shadow:0 0 20px royalblue;
+}
+
+button:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 40px royalblue;
+}
+
+.scoreboard{
+  margin-top:15px;
+  color:royalblue;
+  text-shadow:0 0 10px royalblue;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+  <h1>Tic Tac Toe</h1>
+  <div class="status" id="status">Player X's Turn</div>
+  <div class="board" id="board"></div>
+  <button onclick="resetGame()">Restart</button>
+  <div class="scoreboard">
+    X Wins: <span id="xScore">0</span> | 
+    O Wins: <span id="oScore">0</span>
+  </div>
+</div>
+
+<script>
+let boardState = ["","","","","","","","",""];
+let currentPlayer = "X";
+let gameActive = true;
+let xWins = 0;
+let oWins = 0;
+
+const board = document.getElementById("board");
+const statusText = document.getElementById("status");
+
+const winningPatterns = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
+
+function createBoard(){
+  board.innerHTML="";
+  boardState = ["","","","","","","","",""];
+  
+  for(let i=0;i<9;i++){
+    const cell=document.createElement("div");
+    cell.classList.add("cell");
+    cell.dataset.index=i;
+    cell.addEventListener("click",handleClick);
+    board.appendChild(cell);
+  }
+}
+
+function handleClick(e){
+  const index=e.target.dataset.index;
+
+  if(boardState[index]!=="" || !gameActive) return;
+
+  boardState[index]=currentPlayer;
+  e.target.textContent=currentPlayer;
+  e.target.classList.add(currentPlayer.toLowerCase());
+
+  checkResult();
+}
+
+function checkResult(){
+  let roundWon=false;
+
+  for(let pattern of winningPatterns){
+    const [a,b,c]=pattern;
+
+    if(boardState[a] &&
+       boardState[a]===boardState[b] &&
+       boardState[a]===boardState[c]){
+        highlightWin(pattern);
+        roundWon=true;
+        break;
+    }
+  }
+
+  if(roundWon){
+    statusText.textContent="Player " + currentPlayer + " Wins";
+    updateScore();
+    gameActive=false;
+    return;
+  }
+
+  if(!boardState.includes("")){
+    statusText.textContent="Draw";
+    gameActive=false;
+    return;
+  }
+
+  currentPlayer = currentPlayer==="X"?"O":"X";
+  statusText.textContent="Player " + currentPlayer + "'s Turn";
+}
+
+function highlightWin(pattern){
+  pattern.forEach(index=>{
+    board.children[index].classList.add("winning");
+  });
+}
+
+function updateScore(){
+  if(currentPlayer==="X"){
+    xWins++;
+    document.getElementById("xScore").textContent=xWins;
+  }else{
+    oWins++;
+    document.getElementById("oScore").textContent=oWins;
+  }
+}
+
+function resetGame(){
+  currentPlayer="X";
+  gameActive=true;
+  statusText.textContent="Player X's Turn";
+  createBoard();
+}
+
+createBoard();
+</script>
+
+</body>
+</html>
